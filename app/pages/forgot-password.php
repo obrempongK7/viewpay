@@ -15,14 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = 'Please enter a valid email address.';
         } else {
-            $u = db()->prepare("SELECT id FROM users WHERE email=? AND status='active' LIMIT 1");
+            $u = db()->prepare("SELECT id, name, email FROM users WHERE email=? AND status='active' LIMIT 1");
             $u->execute([$email]); $u = $u->fetch();
             if ($u) {
                 $token = bin2hex(random_bytes(32));
                 db()->prepare("DELETE FROM password_reset_tokens WHERE email=?")->execute([$email]);
                 db()->prepare("INSERT INTO password_reset_tokens(email,token,created_at) VALUES(?,?,?)")
                     ->execute([$email, hash('sha256', $token), now_ts()]);
-                // TODO: send email with reset link: url('reset-password?token='.$token.'&email='.urlencode($email))
+                send_password_reset_email($u, $token);
             }
             // Always show same message (anti-enumeration)
             $msg = 'If that email is registered, a reset link has been sent. Check your inbox.';

@@ -17,6 +17,7 @@ $routes = [
     'register'          => 'pages/register.php',
     'logout'            => 'pages/logout.php',
     'forgot-password'   => 'pages/forgot-password.php',
+    'reset-password'    => 'pages/reset-password.php',
     'verify-email'      => 'pages/verify-email.php',
     'dashboard'         => 'pages/dashboard.php',
     'tasks'             => 'pages/tasks.php',

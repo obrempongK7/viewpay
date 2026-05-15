@@ -152,6 +152,27 @@ function send_verification_email(array $user): bool {
     return @mail($user['email'], 'Verify your '.$site.' account', $body, $headers);
 }
 
+function send_password_reset_email(array $user, string $token): bool {
+    $link = url('reset-password?token='.$token.'&email='.urlencode($user['email']));
+    $site = setting('site_name', APP_NAME);
+    $from = setting('mail_from', setting('site_email','noreply@viewpay.com'));
+    $pri  = setting('primary_color','#6366f1');
+    $body = "<!DOCTYPE html><html><body style='font-family:sans-serif;background:#f5f5fa;padding:30px'>"
+          . "<div style='max-width:500px;margin:0 auto;background:#fff;border-radius:12px;padding:36px;box-shadow:0 2px 12px rgba(0,0,0,.08)'>"
+          . "<div style='text-align:center;margin-bottom:24px'>"
+          . "<h2 style='color:#111'>Reset Password</h2></div>"
+          . "<p style='color:#555'>Hello ".e($user['name']).",</p>"
+          . "<p style='color:#555'>You are receiving this email because we received a password reset request for your account.</p>"
+          . "<div style='text-align:center;margin:28px 0'>"
+          . "<a href='".$link."' style='background:{$pri};color:#fff;padding:13px 32px;border-radius:8px;text-decoration:none;font-weight:700'>Reset Password</a>"
+          . "</div><p style='color:#999;font-size:13px'>If you did not request a password reset, no further action is required. Link expires in 1 hour.</p>"
+          . "<hr style='border:none;border-top:1px solid #eee;margin-top:20px'>"
+          . "<p style='color:#bbb;font-size:12px'>".e($site)." · Developed by Jcode</p>"
+          . "</div></body></html>";
+    $headers  = "From: {$site} <{$from}>\r\nContent-Type: text/html; charset=UTF-8\r\nMIME-Version: 1.0\r\n";
+    return @mail($user['email'], 'Reset your '.$site.' password', $body, $headers);
+}
+
 // Currency
 function get_currency(): array {
     static $c=null;
