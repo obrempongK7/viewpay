@@ -89,7 +89,7 @@ function vp_run_install(array &$d, array &$s): string|bool {
     try { vp_create_tables($pdo); }  catch (Exception $e) { return 'Migration Error: '.$e->getMessage(); }
     try { vp_seed_data($pdo,$d,$s); } catch (Exception $e) { return 'Seed Error: '.$e->getMessage(); }
     $key='base64:'.base64_encode(random_bytes(32));
-    $env=['APP_NAME'=>$d['site_name']??'ViewPay','APP_ENV'=>'production','APP_KEY'=>$key,'APP_DEBUG'=>'false','APP_URL'=>rtrim($d['app_url']??','/'),'DB_HOST'=>$d['db_host']??'127.0.0.1','DB_PORT'=>$d['db_port']??'3306','DB_DATABASE'=>$d['db_name']??'','DB_USERNAME'=>$d['db_user']??'','DB_PASSWORD'=>$d['db_pass']??''];
+    $env=['APP_NAME'=>$d['site_name']??'ViewPay','APP_ENV'=>'production','APP_KEY'=>$key,'APP_DEBUG'=>'false','APP_URL'=>rtrim($d['app_url']??'','/'),'DB_HOST'=>$d['db_host']??'127.0.0.1','DB_PORT'=>$d['db_port']??'3306','DB_DATABASE'=>$d['db_name']??'','DB_USERNAME'=>$d['db_user']??'','DB_PASSWORD'=>$d['db_pass']??''];
     if (!vp_write_env($env)) { $_SESSION['vs_env_warn']=true; $_SESSION['vs_env_txt']=implode("\n",array_map(fn($k,$v)=>"$k=$v",array_keys($env),array_values($env))); }
     $s['vs_app_key']=$key;
     return true;
