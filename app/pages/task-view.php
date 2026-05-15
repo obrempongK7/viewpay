@@ -32,15 +32,23 @@ $todaySt  = db()->prepare("SELECT COUNT(*) FROM task_views WHERE user_id=? AND D
 $todaySt->execute([$user['id']]); $todayCount = (int)$todaySt->fetchColumn();
 if ($todayCount >= $maxDaily) { flash('warning', 'Daily task limit reached. Come back tomorrow!'); redirect('/tasks'); }
 
+// Start timing for GET requests
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $_SESSION['task_start_' . $taskId] = time();
+}
+
 // Handle claim
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
     if ($_POST['action'] === 'claim') {
-        $watched = (int)($_POST['seconds_watched'] ?? 0);
         $minReq  = (int)$t['min_watch_seconds'];
         $fp      = trim(strip_tags($_POST['fp'] ?? ''));
 
-        if ($watched < $minReq) {
+        // Server-side timing validation
+        $sessionStart = $_SESSION['task_start_' . $taskId] ?? 0;
+        $elapsed      = $sessionStart ? (time() - $sessionStart) : 0;
+
+        if ($elapsed < $minReq) {
             flash('error', 'You must watch for at least ' . $minReq . ' seconds to claim the reward.');
             redirect('/tasks/' . $taskId);
         }
@@ -63,11 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               device_fingerprint,started_at,completed_at,created_at,updated_at)
              VALUES(?,?,?,?,?,?,?,?,?,?,?)"
         )->execute([
-            $taskId, $user['id'], $status, $watched, $reward,
-            vp_ip(), $fp ?: null, now_ts(), now_ts(), now_ts(), now_ts()
+            $taskId, $user['id'], $status, $elapsed, $reward,
+            vp_ip(), $fp ?: null, date('Y-m-d H:i:s', $sessionStart), now_ts(), now_ts(), now_ts()
         ]);
 
         if ($isLegit) {
+            unset($_SESSION['task_start_' . $taskId]);
             // Credit wallet
             db()->prepare(
                 "UPDATE users SET wallet_balance=wallet_balance+?,
