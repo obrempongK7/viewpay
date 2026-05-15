@@ -161,5 +161,5 @@ app/
 
 ---
 
-© 2024 ViewPay v2.0.0
+© 2026 ViewPay v2.0.0
 Developed by **Jcode** | Author: **Obrempong**
