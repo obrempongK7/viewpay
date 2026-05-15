@@ -2,7 +2,7 @@ Options -Indexes -MultiViews
 
 # Rewrite engine
 RewriteEngine On
-RewriteBase /
+# RewriteBase /
 
 # Force HTTPS (uncomment in production with SSL)
 # RewriteCond %{HTTPS} off
