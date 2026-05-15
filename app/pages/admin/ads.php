@@ -204,7 +204,11 @@ admin_page_start('Advertisements');
 
 <script>
 const VP_ADS = <?= json_encode($adStore, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>;
-const adModal = new bootstrap.Modal(document.getElementById('adModal'));
+let adModal;
+function getAdModal() {
+    if (!adModal) adModal = new bootstrap.Modal(document.getElementById('adModal'));
+    return adModal;
+}
 
 function openNewAd() {
     document.getElementById('adModalTitle').textContent = 'New Advertisement';
@@ -213,7 +217,7 @@ function openNewAd() {
     document.getElementById('adDur').value   = '5';
     document.getElementById('adSkip').checked   = true;
     document.getElementById('adActive').checked = true;
-    adModal.show();
+    getAdModal().show();
 }
 function openEditAd(id) {
     const a = VP_ADS[id]; if (!a) return;
@@ -228,7 +232,7 @@ function openEditAd(id) {
     document.getElementById('adSkip').checked   = a.is_skippable == 1;
     document.getElementById('adActive').checked = a.is_active == 1;
     toggleAdType(a.type);
-    adModal.show();
+    getAdModal().show();
 }
 function toggleAdType(t) {
     const lbl = document.getElementById('adContentLabel');
