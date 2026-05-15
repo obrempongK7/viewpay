@@ -1,0 +1,64 @@
+Options -Indexes -MultiViews
+
+# Rewrite engine
+RewriteEngine On
+RewriteBase /
+
+# Force HTTPS (uncomment in production with SSL)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Block direct access to sensitive files
+<FilesMatch "\.(env|sql|log|sh|htpasswd|bak|git|json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow manifest.json and sw.js
+<Files "manifest.json">
+    Order allow,deny
+    Allow from all
+</Files>
+<Files "sw.js">
+    Order allow,deny
+    Allow from all
+</Files>
+
+# Block PHP in uploads
+<FilesMatch "\.php$">
+    <If "%{REQUEST_URI} =~ m#/uploads/#">
+        Order allow,deny
+        Deny from all
+    </If>
+</FilesMatch>
+
+# Security headers
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# Charset
+AddDefaultCharset UTF-8
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg     "access plus 1 year"
+    ExpiresByType image/png      "access plus 1 year"
+    ExpiresByType image/svg+xml  "access plus 1 year"
+    ExpiresByType image/webp     "access plus 1 year"
+    ExpiresByType text/css       "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/json "access plus 0 seconds"
+</IfModule>
+
+# Route all requests through index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
