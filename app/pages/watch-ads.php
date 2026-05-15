@@ -33,6 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('/watch-ads');
     }
 
+    // Server-side timing validation
+    $minSec       = (int)setting('ad_min_watch_seconds', '10');
+    $sessionStart = $_SESSION['ad_watch_start'] ?? 0;
+    $elapsed      = $sessionStart ? (time() - $sessionStart) : 0;
+
+    if ($elapsed < $minSec) {
+        flash('error', 'You must watch the ad for at least ' . $minSec . ' seconds.');
+        redirect('/watch-ads');
+    }
+
     $adInfo = ad_can_watch((int)$user['id']);
 
     if (!$adInfo['can']) {
@@ -64,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "UPDATE users SET wallet_balance=wallet_balance+?, total_earned=total_earned+?, updated_at=? WHERE id=?"
     )->execute([$reward, $reward, now_ts(), $user['id']]);
 
+    unset($_SESSION['ad_watch_start']);
+
     // Audit
     audit('ad_watch', "Period: {$period}, Reward: {$reward} USD, Network: {$network}", (int)$user['id']);
 
@@ -82,6 +94,11 @@ $tz      = setting('timezone', 'UTC');
 $nowHour = (int)(new DateTime('now', new DateTimeZone($tz)))->format('G');
 $current = ad_current_period();
 $adInfo  = ad_can_watch((int)$user['id']);
+
+// Start timing for GET requests
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $adInfo['can']) {
+    $_SESSION['ad_watch_start'] = time();
+}
 
 // Load today stats for all periods
 $today = (new DateTime('now', new DateTimeZone($tz)))->format('Y-m-d');
