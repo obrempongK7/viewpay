@@ -171,13 +171,12 @@ page_start(e($t['title']));
         <?php else: ?>
         <div class="p-3 text-center bg-body-secondary border-bottom">
           <p class="small text-muted mb-2">Visit this website and stay for <?= $minSec ?> seconds:</p>
-          <a href="<?= e($t['url']) ?>" target="_blank" class="btn btn-primary fw-600"
-             onclick="startTimer()">
+          <a href="<?= e($t['url']) ?>" target="_blank" class="btn btn-primary fw-600">
             <i class="bi bi-box-arrow-up-right me-2"></i>Open Website
           </a>
         </div>
         <div class="ratio ratio-4x3">
-          <iframe src="<?= e($t['url']) ?>" style="border:0" id="contentFrame" onload="startTimer()"
+          <iframe src="<?= e($t['url']) ?>" style="border:0" id="contentFrame"
                   sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
         </div>
         <?php endif; ?>
@@ -256,9 +255,7 @@ function startTimer() {
 
 // Auto-start timer for video (iframe already loaded)
 window.addEventListener('load', () => {
-    <?php if ($t['type'] === 'video'): ?>
     setTimeout(startTimer, 1500);
-    <?php endif; ?>
 });
 
 // Prevent form double-submit
