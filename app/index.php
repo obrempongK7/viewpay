@@ -7,7 +7,20 @@ define('VP_BOOT', true);
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/layout.php';
 
-$uri = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/', '/');
+$uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+$appPath = parse_url(APP_URL, PHP_URL_PATH);
+if ($appPath && $appPath !== '/') {
+    $appPath = rtrim($appPath, '/');
+    if (str_starts_with($uri, $appPath)) {
+        $uri = substr($uri, strlen($appPath));
+    }
+} else {
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+    if ($scriptDir !== '/' && $scriptDir !== '\\' && str_starts_with($uri, $scriptDir)) {
+        $uri = substr($uri, strlen($scriptDir));
+    }
+}
+$uri = trim($uri, '/');
 $uri = preg_replace('#[^a-zA-Z0-9/\-_]#', '', $uri);
 $uri = preg_replace('#/+#', '/', $uri);
 
