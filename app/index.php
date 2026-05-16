@@ -45,7 +45,7 @@ $file = null;
 if      (preg_match('#^tasks/(\d+)$#',          $uri, $m)) { $_GET['task_id']  = (int)$m[1]; $file = 'pages/task-view.php'; }
 elseif  (preg_match('#^admin/users/(\d+)$#',    $uri, $m)) { $_GET['user_id']  = (int)$m[1]; $file = 'pages/admin/user-detail.php'; }
 elseif  (preg_match('#^admin/tasks/(\d+)$#',    $uri, $m)) { $_GET['task_id']  = (int)$m[1]; $file = 'pages/admin/task-detail.php'; }
-elseif  (preg_match('#^admin/pages/(\d+)$#',    $uri, $m)) { $_GET['page_id']  = (int)$m[1]; $file = 'pages/admin/page-edit.php'; }
+elseif  (preg_match('#^admin/pages/(new|\d+)$#',    $uri, $m)) { $_GET['page_id'] = $m[1] === 'new' ? 0 : (int)$m[1]; $file = 'pages/admin/page-edit.php'; }
 elseif  (preg_match('#^page/([a-z0-9\-]{1,80})$#', $uri, $m)) { $_GET['slug'] = $m[1]; $file = 'pages/cms-page.php'; }
 else    { $file = $routes[$uri] ?? null; }
 

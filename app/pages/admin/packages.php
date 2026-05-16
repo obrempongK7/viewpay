@@ -152,7 +152,7 @@ try {
     $pkgs = db()->query(
         "SELECT p.*,
                 (SELECT COUNT(*) FROM tasks t WHERE t.package_id = p.id) AS task_count
-         FROM packages
+         FROM packages p
          ORDER BY sort_order ASC, id ASC"
     )->fetchAll();
 } catch (Exception $e) {
@@ -527,7 +527,11 @@ const VP_PKGS    = <?= json_encode($pkgStore, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HE
 const currSymbol = <?= json_encode($curr['symbol']) ?>;
 const currRate   = <?= json_encode((float)$curr['rate']) ?>;
 
-const pkgModal = new bootstrap.Modal(document.getElementById('pkgModal'));
+let pkgModal;
+function getPkgModal() {
+    if (!pkgModal) pkgModal = new bootstrap.Modal(document.getElementById('pkgModal'));
+    return pkgModal;
+}
 
 // ── Open modal — NEW package ──────────────────────────────────
 function pkgOpenNew() {
@@ -541,7 +545,7 @@ function pkgOpenNew() {
     document.getElementById('pkgActive').checked  = true;
     document.getElementById('pkgFeatured').checked= false;
     updateCalc();
-    pkgModal.show();
+    getPkgModal().show();
 }
 
 // ── Open modal — EDIT existing package ───────────────────────
@@ -567,7 +571,7 @@ function pkgOpenEdit(id) {
     document.getElementById('pkgFeatured').checked = p.is_featured;
     document.getElementById('pkgFeatures').value   = p.features.join('\n');
     updateCalc();
-    pkgModal.show();
+    getPkgModal().show();
 }
 
 // ── Live price breakdown calculator ──────────────────────────
