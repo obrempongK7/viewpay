@@ -97,6 +97,7 @@ page_start('Browse Tasks — Earn Money');
           <?php if ($canEarn): ?>
           <a href="<?= url('tasks/' . $t['id']) ?>"
              class="btn btn-primary w-100 fw-600 stretched-link"
+             onclick="window.open('<?= e(addslashes($t['url'])) ?>', '_blank');"
              style="background:<?= $typeColor ?>;border-color:<?= $typeColor ?>">
             <i class="bi bi-<?= $typeIcon ?> me-1"></i>Start Task
           </a>
