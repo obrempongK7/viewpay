@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$did) { flash('error','Invalid deposit.'); redirect('/admin/deposits'); }
 
     $dep = db()->prepare(
-        "SELECT d.*, p.name pname, p.views_count, p.duration_days, p.reward_per_view
+        "SELECT d.*, p.name pname, p.views_count, p.duration_days, p.cost_per_view AS reward_per_view
          FROM deposits d LEFT JOIN packages p ON d.package_id=p.id
          WHERE d.id=? LIMIT 1"
     );
