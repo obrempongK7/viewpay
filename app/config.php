@@ -234,7 +234,7 @@ function avatar_url(?string $file,string $name=''): string {
     if($file&&file_exists(__DIR__.'/uploads/'.$file)) return url('uploads/'.$file);
     return 'https://ui-avatars.com/api/?name='.urlencode($name?:'User').'&background=6366f1&color=fff&size=80&bold=true&format=svg';
 }
-function handle_upload(string $field,array $allowed=['jpg','jpeg','png','gif','webp','svg']): string|false {
+function handle_upload(string $field,array $allowed=['jpg','jpeg','png','gif','webp']): string|false {
     if(empty($_FILES[$field])||$_FILES[$field]['error']!==UPLOAD_ERR_OK) return false;
     $file=$_FILES[$field]; if($file['size']>5*1024*1024) return false;
     $ext=strtolower(pathinfo($file['name'],PATHINFO_EXTENSION));

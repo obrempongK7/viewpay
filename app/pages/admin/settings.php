@@ -15,18 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Logo upload
     if (!empty($_FILES['logo']['tmp_name'])) {
-        $f = handle_upload('logo', ['jpg','jpeg','png','gif','webp','svg']);
+        $f = handle_upload('logo', ['jpg','jpeg','png','gif','webp']);
         if ($f) { $old=setting('logo'); if($old) @unlink(__DIR__.'/../../uploads/'.$old); setting_set('logo',$f,'appearance'); }
-        else { flash('error','Logo upload failed. Use PNG/JPG/SVG under 5 MB.'); redirect('/admin/settings?tab='.($_POST['_tab']??'general')); }
+        else { flash('error','Logo upload failed. Use PNG/JPG under 5 MB.'); redirect('/admin/settings?tab='.($_POST['_tab']??'general')); }
     }
     if (!empty($_FILES['favicon']['tmp_name'])) {
-        $f = handle_upload('favicon',['ico','png','svg']); if($f){ $old=setting('favicon'); if($old) @unlink(__DIR__.'/../../uploads/'.$old); setting_set('favicon',$f,'appearance'); }
+        $f = handle_upload('favicon',['ico','png']); if($f){ $old=setting('favicon'); if($old) @unlink(__DIR__.'/../../uploads/'.$old); setting_set('favicon',$f,'appearance'); }
     }
     if (!empty($_FILES['pwa_icon']['tmp_name'])) {
         $f = handle_upload('pwa_icon',['png']); if($f){ setting_set('pwa_icon',$f,'pwa'); }
     }
     if (!empty($_FILES['splash_logo']['tmp_name'])) {
-        $f = handle_upload('splash_logo',['png','svg','jpg','jpeg']); if($f){ setting_set('splash_logo',$f,'pwa'); }
+        $f = handle_upload('splash_logo',['png','jpg','jpeg']); if($f){ setting_set('splash_logo',$f,'pwa'); }
     }
 
     // All text/select fields
@@ -144,9 +144,9 @@ admin_page_start('Settings');
     <div class="card border-0 shadow-sm rounded-xl p-4 h-100">
       <div class="fw-600 small mb-3"><i class="bi bi-image text-primary me-2"></i>Logo &amp; Favicon</div>
       <?php if(sv('logo')): ?><div class="mb-3"><img src="<?= url('uploads/'.sv('logo')) ?>" style="height:40px;object-fit:contain" alt="Logo"> <span class="text-muted small ms-2">Current logo</span></div><?php endif; ?>
-      <div class="mb-3"><label class="form-label small fw-600">Site Logo</label><input type="file" name="logo" class="form-control" accept="image/*"><div class="form-text">PNG/SVG with transparent background · 5 MB max</div></div>
+      <div class="mb-3"><label class="form-label small fw-600">Site Logo</label><input type="file" name="logo" class="form-control" accept="image/*"><div class="form-text">PNG with transparent background · 5 MB max</div></div>
       <?php if(sv('favicon')): ?><div class="mb-2"><img src="<?= url('uploads/'.sv('favicon')) ?>" style="width:32px;height:32px;object-fit:contain" alt="Favicon"> <span class="text-muted small ms-2">Current favicon</span></div><?php endif; ?>
-      <div class="mb-3"><label class="form-label small fw-600">Favicon</label><input type="file" name="favicon" class="form-control" accept=".ico,.png,.svg"></div>
+      <div class="mb-3"><label class="form-label small fw-600">Favicon</label><input type="file" name="favicon" class="form-control" accept=".ico,.png"></div>
       <div><label class="form-label small fw-600">Brand Colour</label>
         <div class="input-group"><input type="color" name="primary_color" id="colorPicker" class="form-control form-control-color" style="width:52px" value="<?= sv('primary_color','#6366f1') ?>" oninput="syncColor(this.value)">
         <input type="text" id="colorHex" class="form-control font-monospace" value="<?= sv('primary_color','#6366f1') ?>" pattern="#[0-9a-fA-F]{6}" oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value)){document.getElementById('colorPicker').value=this.value}"></div>
